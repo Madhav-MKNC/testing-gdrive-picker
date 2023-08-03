@@ -1,37 +1,34 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Google Drive Files</title>
     <style>
-        table,
-        th,
-        td {
+        table, th, td {
             border: 1px solid black;
             border-collapse: collapse;
         }
-
-        th,
-        td {
+        th, td {
             padding: 15px;
         }
     </style>
 </head>
-
 <body>
     <h1>Google Drive Files</h1>
     <table>
         <tr>
             <th>File Name</th>
             <th>File ID</th>
+            <th>Action</th>
         </tr>
         {% for item in items %}
-        <tr>
-            <td>{{ item.name }}</td>
-            <td>{{ item.id }}</td>
-        </tr>
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.id }}</td>
+                <td>
+                    <a href="{{ url_for('download', file_id=item.id) }}" target="_blank">Download</a>
+                </td>
+            </tr>
         {% endfor %}
     </table>
 </body>
-
 </html>

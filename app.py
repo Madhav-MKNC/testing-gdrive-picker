@@ -31,10 +31,15 @@ def index():
         drive_service = build('drive', 'v3', credentials=credentials)
 
         # Get the list of files from Google Drive
-        results = drive_service.files().list(pageSize=10).execute()
+        results = drive_service.files().list().execute()
         items = results.get('files', [])
+        
+        while 'nextPageToken' in results:
+            results = drive_service.files().list(pageToken=results['nextPageToken']).execute()
+            items.extend(results.get('files', []))
 
         return render_template('logged_in.html', items=items)
+
 
 
 @app.route('/authorize')
@@ -109,6 +114,32 @@ def upload():
 
 
 
+@app.route('/download/<file_id>')
+def download(file_id):
+    if 'credentials' not in session:
+        return redirect('authorize')
+    else:
+        # Load credentials from the session
+        credentials = Credentials(**session['credentials'])
+
+        # Build the Drive service
+        drive_service = build('drive', 'v3', credentials=credentials)
+
+        # Request the file from the Drive API
+        request = drive_service.files().get_media(fileId=file_id)
+
+        # Download the file
+        fh = io.BytesIO()
+        downloader = MediaIoBaseDownload(fh, request)
+        done = False
+        while done is False:
+            status, done = downloader.next_chunk()
+
+        # Save the file to disk
+        with open(f'{file_id}', 'wb') as f:
+            f.write(fh.getbuffer())
+
+        return "File downloaded successfully"
 
 
 
