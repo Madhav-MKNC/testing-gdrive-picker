@@ -26,9 +26,14 @@ $(document).ready(function() {
 
     $(document).on('click', '.download', function() {
         let fileId = $(this).data('id');
-
-        $.post('/download', { fileId: fileId }, function(data) {
-            window.open(data.downloadLink, '_blank');
+        $.ajax({
+            url: '/download',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ fileId: fileId }),
+            success: function(data) {
+                window.open(data.downloadLink, '_blank');
+            }
         });
     });
 });

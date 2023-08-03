@@ -4,6 +4,10 @@ from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
 from flask_cors import CORS
 
+import io
+from googleapiclient.http import MediaIoBaseDownload
+
+
 import os
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
@@ -18,7 +22,6 @@ def index():
         return redirect('authorize')
     else:
         return render_template('logged_in.html')
-
 
 @app.route('/files')
 def files():
@@ -37,14 +40,13 @@ def files():
         next_page_token = session.get('nextPageToken', None)
 
         # Get the list of files from Google Drive
-        results = drive_service.files().list(pageSize=10, pageToken=next_page_token).execute()
+        results = drive_service.files().list(pageSize=20, pageToken=next_page_token).execute()
         items = results.get('files', [])
         next_page_token = results.get('nextPageToken', None)
 
         session['nextPageToken'] = next_page_token
 
         return render_template('files.html', items=items, next_page_token=next_page_token is not None)
-
 
 @app.route('/authorize')
 def authorize():
@@ -59,7 +61,6 @@ def authorize():
     )
     session['state'] = state
     return redirect(authorization_url)
-
 
 @app.route('/oauth2callback')
 def oauth2callback():
@@ -95,13 +96,24 @@ def download():
         drive_service = build('drive', 'v3', credentials=credentials)
 
         # Get the ID of the file to download
-        data = request.get_json()
-        file_id = data['fileId']
+        file_id = request.get_json()['fileId']
 
-        # Generate the download link
-        download_link = drive_service.files().get(fileId=file_id, fields='webContentLink').execute()['webContentLink']
+        # Request the file's metadata from Google Drive
+        file = drive_service.files().get(fileId=file_id).execute()
 
-        return {'downloadLink': download_link}
+        # Get the file name from the metadata
+        file_name = file['name']
+
+        grequest = drive_service.files().get_media(fileId=file_id)
+
+        # Replace '/path/to/your/download/directory' with the actual path where you want to save the file
+        fh = io.FileIO(f'./{file_name}', 'wb')
+
+        downloader = MediaIoBaseDownload(fh, grequest)
+        done = False
+        while not done:
+            status, done = downloader.next_chunk()
+        return {'status': 'File downloaded'}
 
 
 
