@@ -2,33 +2,19 @@
 <html>
 <head>
     <title>Google Drive Files</title>
-    <style>
-        table, th, td {
-            border: 1px solid black;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 15px;
-        }
-    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
 </head>
 <body>
     <h1>Google Drive Files</h1>
-    <table>
-        <tr>
-            <th>File Name</th>
-            <th>File ID</th>
-            <th>Action</th>
-        </tr>
-        {% for item in items %}
-            <tr>
-                <td>{{ item.name }}</td>
-                <td>{{ item.id }}</td>
-                <td>
-                    <a href="{{ url_for('download', file_id=item.id) }}" target="_blank">Download</a>
-                </td>
-            </tr>
-        {% endfor %}
-    </table>
+    <button id="openModal">Open Files</button>
+
+    <div id="fileModal" class="modal">
+        <div id="fileContainer"></div>
+        <button id="loadMore" style="display: none;">Load More</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+    <script src="{{ url_for('static', filename='view.js') }}"></script>
 </body>
 </html>

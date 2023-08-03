@@ -1,0 +1,17 @@
+<table>
+    <tr>
+        <th>File Name</th>
+        <th>Action</th>
+    </tr>
+    {% for item in items %}
+        <tr>
+            <td>{{ item.name }}</td>
+            <td>
+                <button class="download" data-id="{{ item.id }}">Download</button>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if next_page_token %}
+    <div class="next-page"></div>
+{% endif %}
