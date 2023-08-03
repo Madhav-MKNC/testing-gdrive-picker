@@ -1,0 +1,4 @@
+Flask==2.3.2
+Flask_Cors==4.0.0
+google_api_python_client==2.95.0
+google_auth_oauthlib==1.0.0
