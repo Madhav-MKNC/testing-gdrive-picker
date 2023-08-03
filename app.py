@@ -17,7 +17,7 @@ os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 app = Flask(__name__)
 CORS(app)  # This will enable CORS for all routes
 
-app.secret_key = 'some'  # replace with your secret key
+app.secret_key = 'sommmknce'  # replace with your secret key
 
 @app.route('/')
 def index():
