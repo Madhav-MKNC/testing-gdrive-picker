@@ -103,11 +103,14 @@ def download():
 
         # Get the file name from the metadata
         file_name = file['name']
+        print(f"\nfile mimetype\n{file['mimeType']}\n")
 
         grequest = drive_service.files().get_media(fileId=file_id)
 
         # Replace '/path/to/your/download/directory' with the actual path where you want to save the file
-        fh = io.FileIO(f'./{file_name}', 'wb')
+        if not os.path.exists('./downloads/'):
+            os.makedirs('./downloads')
+        fh = io.FileIO(f'./downloads/{file_name}', 'wb')
 
         downloader = MediaIoBaseDownload(fh, grequest)
         done = False
